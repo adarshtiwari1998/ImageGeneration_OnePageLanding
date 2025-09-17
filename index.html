@@ -215,6 +215,47 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        /* Image Gallery Section */
+        .image-gallery {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .gallery-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .gallery-caption {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .gallery-caption h3 {
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
         /* Industries Section */
         .industries {
             padding: 80px 0;
@@ -334,6 +375,15 @@
                 height: 250px;
             }
 
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .gallery-image {
+                height: 200px;
+            }
+
             .form-group {
                 grid-template-columns: 1fr;
             }
@@ -424,6 +474,71 @@
                     <h2>Plastic Molding Services</h2>
                     <p>Our plastic molding capabilities are engineered to meet the highest standards of quality, precision, and biocompatibility required by the <strong>bioprocess, pharmaceutical, and life sciences industries</strong>. With in-house injection molding and blow molding expertise across <strong>Class 7 cleanroom facilities</strong> in the USA and India, we deliver high-performance components for both standard and custom <strong>Single-Use Technologies (SUT)</strong>.</p>
                     <a href="#contact" class="cta-button">Request a Quote</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Gallery Section -->
+    <section class="image-gallery">
+        <div class="container">
+            <h2 class="section-title">Our Equipment Gallery - Multiple Angles</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Turquoise_machines_front_angle_ac4dd503.png" alt="Turquoise Machines Front View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Clean Room - Front View</h3>
+                        <p>Turquoise injection molding machines with white frameworks</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Turquoise_machines_side_angle_af60c10b.png" alt="Turquoise Machines Side View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Clean Room - Side View</h3>
+                        <p>Side perspective of pharmaceutical grade equipment</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Turquoise_machines_corner_angle_1cd3b1e6.png" alt="Turquoise Machines Corner View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Clean Room - Corner View</h3>
+                        <p>Diagonal perspective showing facility layout</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Turquoise_machines_wide_angle_bd562f30.png" alt="Turquoise Machines Wide View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Clean Room - Wide View</h3>
+                        <p>Complete facility overview</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Yellow_machine_front_angle_47e4df32.png" alt="Yellow Machine Front View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Yellow Machine - Front</h3>
+                        <p>Large injection molding machine front view</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Yellow_machine_side_angle_1f99604a.png" alt="Yellow Machine Side View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Yellow Machine - Side</h3>
+                        <p>Side perspective of industrial equipment</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Yellow_machine_rear_angle_13f043f7.png" alt="Yellow Machine Rear View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Yellow Machine - Rear</h3>
+                        <p>Back view showing machine connections</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="attached_assets/generated_images/Yellow_machine_closeup_angle_dc5c8d3d.png" alt="Yellow Machine Closeup View" class="gallery-image">
+                    <div class="gallery-caption">
+                        <h3>Yellow Machine - Detail</h3>
+                        <p>Close-up view of machine components</p>
+                    </div>
                 </div>
             </div>
         </div>
