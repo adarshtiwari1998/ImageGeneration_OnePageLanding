@@ -27,12 +27,49 @@ border: 2px solid #e885ac!important;
   </div>
   {% assign home_blog_limit = settings.home_page_blog_limit %}
   {% assign article_count = 0 %}
-  
+
   {% comment %} Create an array to store all articles from all blogs {% endcomment %}
   {% assign all_articles = blogs['foxx-blog'].articles | concat: blogs['foxx-podcast'].articles | concat: blogs['foxx-in-news'].articles %}
   {% assign all_articles = all_articles | sort: 'published_at' | reverse %}
 
   {% for article in all_articles limit: home_blog_limit %}
+  
+  {% comment %} Determine which blog category this article belongs to {% endcomment %}
+  {% assign blog_category = '' %}
+  {% assign category_class = '' %}
+  {% assign category_url = '' %}
+  
+  {% for blog_article in blogs['foxx-blog'].articles %}
+    {% if blog_article.id == article.id %}
+      {% assign blog_category = 'Foxx Blog' %}
+      {% assign category_class = 'foxx-blog' %}
+      {% assign category_url = '/blogs/foxx-blog' %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  
+  {% if blog_category == '' %}
+    {% for blog_article in blogs['foxx-podcast'].articles %}
+      {% if blog_article.id == article.id %}
+        {% assign blog_category = 'Foxx Podcast' %}
+        {% assign category_class = 'foxx-podcast' %}
+        {% assign category_url = '/blogs/foxx-podcast' %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  
+  {% if blog_category == '' %}
+    {% for blog_article in blogs['foxx-in-news'].articles %}
+      {% if blog_article.id == article.id %}
+        {% assign blog_category = 'Foxx In News' %}
+        {% assign category_class = 'foxx-news' %}
+        {% assign category_url = '/blogs/foxx-in-news' %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
   <div class="both_section_block_blog open-house-themed-cards-blog">
     {% if article.image %}
   {% assign image_alt = article.title | escape %}
@@ -40,38 +77,9 @@ border: 2px solid #e885ac!important;
 {% endif %}
 
     <div class="blog_title_text_block"   {% unless article.image %} style="width:100%;     padding-left:0px;" {% endunless %}>
-      {% comment %} Determine which blog category this article belongs to {% endcomment %}
-      {% assign blog_category = '' %}
-      {% assign category_class = '' %}
-      {% for blog_article in blogs['foxx-blog'].articles %}
-        {% if blog_article.id == article.id %}
-          {% assign blog_category = 'Foxx Blog' %}
-          {% assign category_class = 'foxx-blog' %}
-          {% break %}
-        {% endif %}
-      {% endfor %}
-      {% if blog_category == '' %}
-        {% for blog_article in blogs['foxx-podcast'].articles %}
-          {% if blog_article.id == article.id %}
-            {% assign blog_category = 'Foxx Podcast' %}
-            {% assign category_class = 'foxx-podcast' %}
-            {% break %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-      {% if blog_category == '' %}
-        {% for blog_article in blogs['foxx-in-news'].articles %}
-          {% if blog_article.id == article.id %}
-            {% assign blog_category = 'Foxx In News' %}
-            {% assign category_class = 'foxx-news' %}
-            {% break %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-      
-      {% comment %} Display category badge {% endcomment %}
+      {% comment %} Display small category badge at top {% endcomment %}
       <div class="blog-category-badge {{ category_class }}">{{ blog_category }}</div>
-      
+
 <h1><a href="{{ article.url }}">{{ article.title }}</a></h1>
         <p class="blog-date">
       <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
@@ -79,12 +87,6 @@ border: 2px solid #e885ac!important;
         <span class="meta-sep">&#8226;</span>
         {{ article.author }}
       {% endif %}
-      {% comment %} {% if article.tags.size > 0 %}
-        <span class="meta-sep">&#8226;</span>
-        {% for tag in article.tags %}
-          <a href="{{ blog.url }}/blogs/foxx-blog/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
-        {% endfor %}
-      {% endif %} {% endcomment %}
     </p>
 
 {% if article.excerpt.size > 0 %}
@@ -93,8 +95,14 @@ border: 2px solid #e885ac!important;
 <p>{{ article.content | strip_html | truncate: 250 }}</p>
 {% endif %}
 
-
 <p><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+
+      {% comment %} Display prominent category label under the card {% endcomment %}
+      <div class="blog-category-footer">
+        <a href="{{ category_url }}" class="category-footer-link {{ category_class }}">
+          <span class="category-icon">📁</span> {{ blog_category }}
+        </a>
+      </div>
   </div>
   </div>
   {% endfor %}
@@ -226,7 +234,7 @@ border: 2px solid #e885ac!important;
   border-color: #007bff;
 }
 
-.category-link:hover {
+.category-link:hover, .view-all-link:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -248,20 +256,19 @@ border: 2px solid #e885ac!important;
 
 .view-all-link:hover {
   background: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-/* Individual Post Category Badges */
+/* Small Category Badge at Top of Posts */
 .blog-category-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 10px;
+  opacity: 0.8;
 }
 
 .blog-category-badge.foxx-blog {
@@ -282,7 +289,70 @@ border: 2px solid #e885ac!important;
   border: 1px solid #a5d6a7;
 }
 
-/* Responsive Design for Category Links */
+/* Prominent Category Footer Labels */
+.blog-category-footer {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 15px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.category-footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid;
+}
+
+.category-footer-link.foxx-blog {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #bbdefb;
+}
+
+.category-footer-link.foxx-podcast {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-color: #ce93d8;
+}
+
+.category-footer-link.foxx-news {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.category-footer-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.category-footer-link.foxx-blog:hover {
+  background: #1565c0;
+  color: white;
+}
+
+.category-footer-link.foxx-podcast:hover {
+  background: #7b1fa2;
+  color: white;
+}
+
+.category-footer-link.foxx-news:hover {
+  background: #2e7d32;
+  color: white;
+}
+
+.category-icon {
+  font-size: 12px;
+}
+
+/* Responsive Design */
 @media (max-width: 700px) {
   .blog_category_links {
     gap: 8px;
@@ -296,6 +366,11 @@ border: 2px solid #e885ac!important;
   .blog_header h5 {
     font-size: 18px !important;
     margin-bottom: 10px;
+  }
+  
+  .category-footer-link {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
 </style>
