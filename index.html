@@ -367,6 +367,45 @@
             padding: 2rem 0;
         }
 
+        /* Layout Max-Width Constraints - Prevent Stretching on Large Screens */
+        html {
+            background-color: #f8f9fa; /* Light background for areas outside max-width */
+        }
+        
+        body {
+            max-width: 1400px; /* Maximum width for the entire layout */
+            margin: 0 auto; /* Center the layout horizontally */
+            background-color: #ffffff; /* White background for main content area */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+            position: relative;
+        }
+        
+        /* Ensure all main sections respect the constraints */
+        .container {
+            max-width: 1200px !important; /* Override any existing full-width styles */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 1440px) {
+            body {
+                max-width: 100%;
+                box-shadow: none;
+            }
+            
+            html {
+                background-color: #ffffff;
+            }
+        }
+        
+        /* Extra wide screen specific adjustments */
+        @media (min-width: 1600px) {
+            body {
+                max-width: 1400px; /* Keep fixed max width on very large screens */
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-links {
@@ -400,6 +439,10 @@
 
             .form-group {
                 grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 15px;
             }
         }
     </style>
