@@ -1,0 +1,288 @@
+{% include 'breadcrumb' %}
+{% paginate blog.articles by 5 %}
+    <header class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 class="section-header__title">{{ blog.title }}</h1>
+        <a href="/blogs/foxx-in-news" class=" animated-button">Foxx In News</a>
+      </header>
+
+      <style>
+        .animated-button {
+          position: relative;
+          text-decoration: none;
+          padding-bottom: 5px;
+          overflow: hidden;
+        }
+
+        .animated-button::after {
+          content: "";
+          position: absolute;
+          left: -100%;
+          bottom: 0;
+          width: 100%;
+          height: 3px;
+          background-color: #007bff;
+          animation: slideUnderline 2s infinite linear;
+        }
+
+        @keyframes slideUnderline {
+          0% { left: -100%; }
+          100% { left: 100%; }
+        }
+      </style>
+
+{% render 'breast-cancer-promotional-css' %}
+
+<div class="promotional-banner">
+     <a href="/pages/us-independence-day-sale-25">
+      <img src="#"
+            alt="Our Biggest Patriotic Sale of the Year"
+              title="Our Biggest Patriotic Sale of the Year"
+            class="banner-img">
+    </a>
+    {% comment %} <a href="/pages/foxx-open-house-registration-2025">
+    <img src="https://cdn.shopify.com/s/files/1/1064/0118/files/Website_Banner_2708x417-foxx-open-house.jpg?v=1739196928"
+          alt="Foxx Loves India Open House | 14th February 2025, 10:30AM 📍 619 Pudur, Medchal, Hyderabad, Telangana-501401, India"
+            title="Foxx Loves India Open House | 14th February 2025, 10:30AM 📍 619 Pudur, Medchal, Hyderabad, Telangana-501401, India"
+          class="banner-img">
+  </a> {% endcomment %}
+</div>
+{% comment %} {% render 'christmas-promo-offer' %} {% endcomment %}
+{% comment %} <div class="container link-bar">
+  <div class="link-bar__wrapper">
+  <div class="link-bar__scroller hide-scrollbar">
+    <ul class="link-bar__linklist list--unstyled" role="list">  
+      {% for tag in blog.tags %}
+      <li class="link-bar__link-item">
+        <a href="/blogs/blog/tagged/{{ tag | handle }}" class="link-bar__link link--animated text--underlined" data-tag="{{ tag | handle }}">{{ tag }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+</div>
+</div> {% endcomment %}
+
+
+<div class="posts-container">
+    {% for article in blog.articles %}
+      <div class="article" data-tags="{% for tag in article.tags %}{{ tag | handle }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
+            <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+            <p class="blog-date">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+                {% if settings.blog_author_enable %}
+                    <span class="meta-sep">&#8226;</span>
+                    {{ article.author }}
+                {% endif %}
+                {% comment %} {% if article.tags.size > 0 %}
+                    <span class="meta-sep">&#8226;</span>
+                    {% for tag in article.tags %}
+                        <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
+                    {% endfor %}
+                {% endif %} {% endcomment %}
+            </p>
+            <div class="rte">
+                {% if article.image %}
+                    {% assign image_alt = article.title | escape %}
+                    <p>{{ article | img_url: '512x512' | img_tag: image_alt, 'article__image' | link_to: article.url }}</p>
+                {% endif %}
+                {% if article.excerpt.size > 0 %}
+                    {{ article.excerpt }}
+                {% else %}
+                    <p>{{ article.content | strip_html | truncatewords: 100 }}</p>
+                {% endif %}
+            </div>
+            <p><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+        </div>
+      {% unless forloop.last %}<hr>{% endunless %}
+
+    {% endfor %}
+</div>
+
+{% if paginate.pages > 1 %}
+  <div class="text-center">
+    {% include 'pagination-custom' %}
+  </div>
+{% endif %}
+
+{% endpaginate %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabsContainer = document.querySelector('.link-bar__linklist');
+
+    // Create "All Posts" link and insert it at the beginning
+    const allPostsItem = document.createElement('li');
+    allPostsItem.classList.add('link-bar__link-item', 'link-bar__link-item--selected');
+
+    const allPostsLink = document.createElement('a');
+    allPostsLink.href = "/blogs/foxx-blog";
+    allPostsLink.classList.add('link-bar__link', 'link--animated', 'text--underlined');
+    allPostsLink.setAttribute('data-tag', 'all');
+    allPostsLink.textContent = 'All Posts';
+
+    allPostsItem.appendChild(allPostsLink);
+    tabsContainer.prepend(allPostsItem); // Insert at the beginning of the list
+
+    const tabs = document.querySelectorAll('.link-bar__link');
+    const articles = document.querySelectorAll('.article');
+
+    // Function to show/hide articles based on selected tag
+    function filterArticles(selectedTag) {
+        articles.forEach(article => {
+            const articleTags = article.getAttribute('data-tags').split(',');
+            if (selectedTag === 'all' || articleTags.includes(selectedTag.trim())) {
+                article.style.display = 'block'; // Show article
+            } else {
+                article.style.display = 'none'; // Hide article
+            }
+        });
+    }
+
+    // Show all articles when the page loads
+    filterArticles('all');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            const selectedTag = this.getAttribute('data-tag');
+
+            if (selectedTag !== 'all') {
+                e.preventDefault(); // Prevent default anchor behavior
+            }
+
+            // Remove 'link-bar__link-item--selected' class from all li elements
+            const allListItems = document.querySelectorAll('.link-bar__link-item');
+            allListItems.forEach(item => item.classList.remove('link-bar__link-item--selected'));
+
+            // Make the clicked tab active
+            this.parentElement.classList.add('link-bar__link-item--selected'); // Add class to the parent li
+
+            // Make the clicked link text bold
+            tabs.forEach(t => t.style.fontWeight = 'normal'); // Reset bold
+            this.style.fontWeight = 'bold'; // Make clicked link bold
+
+            // Filter articles based on selected tag
+            filterArticles(selectedTag);
+        });
+    });
+});
+</script>
+
+
+
+
+
+<style>
+.link-bar .link-bar__wrapper {
+    margin: 0px 0px 30px 0px !important;
+}
+.link-bar__wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+}
+
+.link-bar__scroller {
+    scroll-snap-type: x proximity;
+}
+.hide-scrollbar {
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.link-bar .link-bar__wrapper ul {
+    gap: 10px;
+}
+
+
+ .link-bar ul:last-child {
+    margin-bottom: 0 !important;
+}
+
+.link-bar ul:first-child {
+    margin-top: 0 !important;
+}
+
+.link-bar__linklist {
+    display: flex;
+    align-items: center;
+    grid-gap: 28px;
+    gap: 28px;
+    min-width: max-content;
+}
+
+.list--unstyled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.link-bar li {
+    background: #d8d9db;
+}
+
+.link-bar li.link-bar__link-item--selected {
+    background: #ecf0f4;
+}
+
+.link-bar li {
+    padding: 9px 21px !important;
+    border-radius: 17px;
+    line-height: unset;
+}
+
+
+@media screen and (min-width: 741px) {
+    .link-bar__link-item, .link-bar__title {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .link-bar__link-item, .link-bar__title {
+        padding-top: 27px;
+        padding-bottom: 27px;
+    }
+}
+
+.link-bar li.capitalized_text a {
+    text-transform: capitalize;
+}
+
+.link-bar li a {
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 14px;
+    letter-spacing: normal;
+    text-align: left;
+    color: #1a2024;
+}
+
+.link--animated {
+    display: block;
+    position: relative;
+    width: max-content;
+}
+
+.link--animated::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: 27px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: var(--transform-origin-end);
+    transition: transform .3s;
+    color: #c74338;
+}
+
+.link-bar li.link-bar__link-item--selected {
+    background: #ecf0f4; /* Light background for selected link */
+    font-weight: bold; /* Make text bold for selected link */
+}
+
+</style>
