@@ -28,29 +28,13 @@ border: 2px solid #e885ac!important;
   <a href="{{settings.home_page_blog_button_link}}">View all blogs </a>
   </div>
   {% assign home_blog_limit = settings.home_page_blog_limit %}
+  {% assign article_count = 0 %}
+  
+  {% comment %} Create an array to store all articles from all blogs {% endcomment %}
+  {% assign all_articles = blogs['foxx-blog'].articles | concat: blogs['foxx-podcast'].articles | concat: blogs['foxx-in-news'].articles %}
+  {% assign all_articles = all_articles | sort: 'published_at' | reverse %}
 
-  {% comment %} Combine articles from all three blog categories {% endcomment %}
-  {% assign all_articles = '' | split: '' %}
-  
-  {% comment %} Add articles from Foxx Blog {% endcomment %}
-  {% for article in blogs.foxx-blog.articles %}
-    {% assign all_articles = all_articles | push: article %}
-  {% endfor %}
-  
-  {% comment %} Add articles from Foxx Podcast {% endcomment %}
-  {% for article in blogs.foxx-podcast.articles %}
-    {% assign all_articles = all_articles | push: article %}
-  {% endfor %}
-  
-  {% comment %} Add articles from Foxx In News {% endcomment %}
-  {% for article in blogs.foxx-in-news.articles %}
-    {% assign all_articles = all_articles | push: article %}
-  {% endfor %}
-  
-  {% comment %} Sort all articles by published date (most recent first) {% endcomment %}
-  {% assign sorted_articles = all_articles | sort: 'published_at' | reverse %}
-
-  {% for article in sorted_articles limit: home_blog_limit %}
+  {% for article in all_articles limit: home_blog_limit %}
   <div class="both_section_block_blog open-house-themed-cards-blog">
     {% if article.image %}
   {% assign image_alt = article.title | escape %}
