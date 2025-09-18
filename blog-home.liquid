@@ -1,0 +1,172 @@
+
+{% comment %} <style>
+  .open-house-themed-cards-blog{
+background-color: #f8dae6!important;
+border: 2px solid #e885ac!important;
+}
+
+.open-house-themed-cards-blog h1 a {
+color: #ba6a8a!important
+}
+
+.open-house-themed-cards-blog:hover{
+border: 2px solid #e885ac!important;
+}
+
+</style> {% endcomment %}
+
+<div class="blog_sction-home">
+  <div class="blog_header" style="text-align:center">
+  <h5>{{settings.home_page_blog}}</h5> 
+  {% comment %} <div class="aimSection width900" id="product-sec1">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h5 class="text-white bold heading2bfs"><span>{{settings.home_page_blog}}</span></h5>
+        </div>
+    </div>
+</div> {% endcomment %}
+  <a href="{{settings.home_page_blog_button_link}}">View all blogs </a>
+  </div>
+  {% assign home_blog_limit = settings.home_page_blog_limit %}
+
+  {% comment %} Combine articles from all three blog categories {% endcomment %}
+  {% assign all_articles = '' | split: '' %}
+  
+  {% comment %} Add articles from Foxx Blog {% endcomment %}
+  {% for article in blogs.foxx-blog.articles %}
+    {% assign all_articles = all_articles | push: article %}
+  {% endfor %}
+  
+  {% comment %} Add articles from Foxx Podcast {% endcomment %}
+  {% for article in blogs.foxx-podcast.articles %}
+    {% assign all_articles = all_articles | push: article %}
+  {% endfor %}
+  
+  {% comment %} Add articles from Foxx In News {% endcomment %}
+  {% for article in blogs.foxx-in-news.articles %}
+    {% assign all_articles = all_articles | push: article %}
+  {% endfor %}
+  
+  {% comment %} Sort all articles by published date (most recent first) {% endcomment %}
+  {% assign sorted_articles = all_articles | sort: 'published_at' | reverse %}
+
+  {% for article in sorted_articles limit: home_blog_limit %}
+  <div class="both_section_block_blog open-house-themed-cards-blog">
+    {% if article.image %}
+  {% assign image_alt = article.title | escape %}
+<p class="home_page_blog_image">{{ article | img_url: '256x256' | img_tag: image_alt, 'article__image' | link_to: article.url }}</p>
+{% endif %}
+
+
+    <div class="blog_title_text_block"   {% unless article.image %} style="width:100%;     padding-left:0px;" {% endunless %}>
+<h1><a href="{{ article.url }}">{{ article.title }}</a></h1>
+        <p class="blog-date">
+      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+      {% if settings.blog_author_enable %}
+        <span class="meta-sep">&#8226;</span>
+        {{ article.author }}
+      {% endif %}
+      {% comment %} {% if article.tags.size > 0 %}
+        <span class="meta-sep">&#8226;</span>
+        {% for tag in article.tags %}
+          <a href="{{ blog.url }}/blogs/foxx-blog/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
+        {% endfor %}
+      {% endif %} {% endcomment %}
+    </p>
+
+{% if article.excerpt.size > 0 %}
+{{ article.excerpt }}
+{% else %}
+<p>{{ article.content | strip_html | truncate: 250 }}</p>
+{% endif %}
+
+
+<p><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+  </div>
+  </div>
+  {% endfor %}
+
+</div>
+<style>
+.blog_header {
+    width: 100%;
+    float: left;border-bottom: 3px solid #f0f0f0;
+    margin-bottom: 30px;
+}
+
+.blog_header {
+  display:flex!important;
+  justify-content: space-between!important;
+  align-items: center;
+}
+
+
+.blog_header a {
+  padding-top:0px!important
+}
+
+.blog_header h5, .section-header__title--left h5 {
+  font-size:22px!important
+}
+
+.blog_header a {
+  text-align: right;
+  color: #007bff;
+  font-size: 16px;
+  padding-top:50px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.blog_header a:hover {
+  color: #0056b3;
+}
+
+.both_section_block_blog {
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1); /* Light box shadow */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover effect */
+}
+
+.both_section_block_blog:hover {
+  transform: translateY(-5px); /* Slight movement on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.22);
+}
+  p.home_page_blog_image {
+    max-width: 341px;
+    float: left;
+}
+  .blog_title_text_block h1 a {
+    font-size: 18px;
+}
+  .blog_header h1,.blog_header a {
+    float: left;
+    width: 50%;
+}
+  .blog_header a {
+  text-align:right;
+  }
+  .blog_header h1{
+    font-size: 0.9375em;
+    text-transform: uppercase;
+}
+  .blog_title_text_block {
+    width: 70%;
+    float: left;
+    text-align: left;
+        padding-left: 25px;
+}
+  @media (max-width: 700px) {
+  .blog_title_text_block ,  p.home_page_blog_image{
+    width: 100% !important;
+   padding: 0 !important;
+}
+  }
+</style>
