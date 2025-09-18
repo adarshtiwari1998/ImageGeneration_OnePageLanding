@@ -2006,6 +2006,13 @@ var ww,wh,textHeartTimer,canvas=document.getElementById("heartsCanvas"),ctx=canv
       position: relative;
     }
     
+    /* Override existing full-width styles with higher specificity */
+    .site-header #site_header {
+      width: 100% !important; /* Maintain full header width within body constraint */
+      max-width: 1400px !important; /* But constrain to body max-width */
+      margin: 0 auto !important;
+    }
+    
     /* Ensure wrapper and main content respect the constraints */
     .wrapper {
       max-width: 100%; /* Ensure wrapper doesn't exceed body width */
@@ -2017,7 +2024,7 @@ var ww,wh,textHeartTimer,canvas=document.getElementById("heartsCanvas"),ctx=canv
       max-width: 100%;
     }
     
-    /* Header constraints */
+    /* Header constraints with higher specificity */
     .site-header {
       max-width: 100%;
       margin: 0 auto;
