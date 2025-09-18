@@ -113,72 +113,180 @@
 {% endpaginate %}
 
 <!-- Recommendations Section -->
-{% comment %} Show recommendations from the other blog category {% endcomment %}
-{% if blog.handle == 'foxx-in-news' %}
-  {% assign other_blog = blogs['foxx-blog'] %}
-  {% assign other_blog_title = 'Foxx Blogs' %}
-{% elsif blog.handle == 'foxx-blog' %}
-  {% assign other_blog = blogs['foxx-in-news'] %}
-  {% assign other_blog_title = 'Foxx In News' %}
+{% comment %} Show recommendations from the other blog categories {% endcomment %}
+{% assign has_recommendations = false %}
+{% if blog.handle != 'foxx-blog' and blogs['foxx-blog'].articles.size > 0 %}
+  {% assign has_recommendations = true %}
+{% elsif blog.handle != 'foxx-in-news' and blogs['foxx-in-news'].articles.size > 0 %}
+  {% assign has_recommendations = true %}
+{% elsif blog.handle != 'foxx-podcast' and blogs['foxx-podcast'].articles.size > 0 %}
+  {% assign has_recommendations = true %}
 {% endif %}
 
-{% if other_blog and other_blog.articles.size > 0 %}
+{% if has_recommendations %}
 <div class="recommendations-section" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #ecf0f4;">
   <div class="container">
     <h2 class="recommendations-title" style="font-size: 2rem; margin-bottom: 30px; color: #1a2024; text-align: center;">
-      Recommended from {{ other_blog_title }}
+      Recommended from Other Blogs
     </h2>
     
     <div class="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
-      {% for article in other_blog.articles limit: 3 %}
-        <div class="recommendation-card" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05);">
-          {% if article.image %}
-            <div class="recommendation-image" style="height: 200px; overflow: hidden; position: relative;">
-              <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+      {% comment %} Show articles from Foxx Blog if not currently on it {% endcomment %}
+      {% if blog.handle != 'foxx-blog' and blogs['foxx-blog'].articles.size > 0 %}
+        {% for article in blogs['foxx-blog'].articles limit: 1 %}
+          <div class="recommendation-card" style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.04);">
+            {% if article.image %}
+              <div class="recommendation-image" style="height: 200px; overflow: hidden; position: relative;">
+                <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+              </div>
+            {% endif %}
+            
+            <div class="recommendation-content" style="padding: 22px;">
+              <div class="blog-category" style="font-size: 0.8rem; color: #007bff; font-weight: 500; margin-bottom: 8px;">Foxx Blog</div>
+              <h3 style="font-size: 1.15rem; margin-bottom: 12px; line-height: 1.45; font-weight: 600;">
+                <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none; transition: color 0.2s ease;">{{ article.title }}</a>
+              </h3>
+              
+              <p class="recommendation-date" style="font-size: 0.85rem; color: #7a7a7a; margin-bottom: 16px; font-weight: 500;">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+                {% if settings.blog_author_enable and article.author %}
+                  <span style="margin: 0 6px; color: #bbb;">•</span>
+                  {{ article.author }}
+                {% endif %}
+              </p>
+              
+              <div class="recommendation-excerpt" style="font-size: 0.94rem; line-height: 1.65; color: #4a5568; margin-bottom: 18px;">
+                {% if article.excerpt.size > 0 %}
+                  {{ article.excerpt | strip_html | truncatewords: 18 }}
+                {% else %}
+                  {{ article.content | strip_html | truncatewords: 18 }}
+                {% endif %}
+              </div>
+              
+              <a href="{{ article.url }}" class="recommendation-link" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                Read More <span style="transition: transform 0.2s ease;">→</span>
+              </a>
             </div>
-          {% endif %}
-          
-          <div class="recommendation-content" style="padding: 22px;">
-            <h3 style="font-size: 1.15rem; margin-bottom: 12px; line-height: 1.45; font-weight: 600;">
-              <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none; transition: color 0.2s ease;">{{ article.title }}</a>
-            </h3>
-            
-            <p class="recommendation-date" style="font-size: 0.85rem; color: #7a7a7a; margin-bottom: 16px; font-weight: 500;">
-              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
-              {% if settings.blog_author_enable and article.author %}
-                <span style="margin: 0 6px; color: #bbb;">•</span>
-                {{ article.author }}
-              {% endif %}
-            </p>
-            
-            <div class="recommendation-excerpt" style="font-size: 0.94rem; line-height: 1.65; color: #4a5568; margin-bottom: 18px;">
-              {% if article.excerpt.size > 0 %}
-                {{ article.excerpt | strip_html | truncatewords: 18 }}
-              {% else %}
-                {{ article.content | strip_html | truncatewords: 18 }}
-              {% endif %}
-            </div>
-            
-            <a href="{{ article.url }}" class="recommendation-link" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
-              Read More <span style="transition: transform 0.2s ease;">→</span>
-            </a>
           </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      {% endif %}
+      
+      {% comment %} Show articles from Foxx In News if not currently on it {% endcomment %}
+      {% if blog.handle != 'foxx-in-news' and blogs['foxx-in-news'].articles.size > 0 %}
+        {% for article in blogs['foxx-in-news'].articles limit: 1 %}
+          <div class="recommendation-card" style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.04);">
+            {% if article.image %}
+              <div class="recommendation-image" style="height: 200px; overflow: hidden; position: relative;">
+                <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+              </div>
+            {% endif %}
+            
+            <div class="recommendation-content" style="padding: 22px;">
+              <div class="blog-category" style="font-size: 0.8rem; color: #10b981; font-weight: 500; margin-bottom: 8px;">Foxx In News</div>
+              <h3 style="font-size: 1.15rem; margin-bottom: 12px; line-height: 1.45; font-weight: 600;">
+                <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none; transition: color 0.2s ease;">{{ article.title }}</a>
+              </h3>
+              
+              <p class="recommendation-date" style="font-size: 0.85rem; color: #7a7a7a; margin-bottom: 16px; font-weight: 500;">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+                {% if settings.blog_author_enable and article.author %}
+                  <span style="margin: 0 6px; color: #bbb;">•</span>
+                  {{ article.author }}
+                {% endif %}
+              </p>
+              
+              <div class="recommendation-excerpt" style="font-size: 0.94rem; line-height: 1.65; color: #4a5568; margin-bottom: 18px;">
+                {% if article.excerpt.size > 0 %}
+                  {{ article.excerpt | strip_html | truncatewords: 18 }}
+                {% else %}
+                  {{ article.content | strip_html | truncatewords: 18 }}
+                {% endif %}
+              </div>
+              
+              <a href="{{ article.url }}" class="recommendation-link" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                Read More <span style="transition: transform 0.2s ease;">→</span>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      {% comment %} Show articles from Foxx Podcast if not currently on it {% endcomment %}
+      {% if blog.handle != 'foxx-podcast' and blogs['foxx-podcast'].articles.size > 0 %}
+        {% for article in blogs['foxx-podcast'].articles limit: 1 %}
+          <div class="recommendation-card" style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.04);">
+            {% if article.image %}
+              <div class="recommendation-image" style="height: 200px; overflow: hidden; position: relative;">
+                <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+              </div>
+            {% endif %}
+            
+            <div class="recommendation-content" style="padding: 22px;">
+              <div class="blog-category" style="font-size: 0.8rem; color: #9333ea; font-weight: 500; margin-bottom: 8px;">Foxx Podcast</div>
+              <h3 style="font-size: 1.15rem; margin-bottom: 12px; line-height: 1.45; font-weight: 600;">
+                <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none; transition: color 0.2s ease;">{{ article.title }}</a>
+              </h3>
+              
+              <p class="recommendation-date" style="font-size: 0.85rem; color: #7a7a7a; margin-bottom: 16px; font-weight: 500;">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+                {% if settings.blog_author_enable and article.author %}
+                  <span style="margin: 0 6px; color: #bbb;">•</span>
+                  {{ article.author }}
+                {% endif %}
+              </p>
+              
+              <div class="recommendation-excerpt" style="font-size: 0.94rem; line-height: 1.65; color: #4a5568; margin-bottom: 18px;">
+                {% if article.excerpt.size > 0 %}
+                  {{ article.excerpt | strip_html | truncatewords: 18 }}
+                {% else %}
+                  {{ article.content | strip_html | truncatewords: 18 }}
+                {% endif %}
+              </div>
+              
+              <a href="{{ article.url }}" class="recommendation-link" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                Read More <span style="transition: transform 0.2s ease;">→</span>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
     
     <div style="text-align: center; margin-top: 30px;">
-      <a href="{{ other_blog.url }}" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s ease;">
-        View All {{ other_blog_title }}
-      </a>
+      {% if blog.handle == 'foxx-in-news' %}
+        <a href="/blogs/foxx-blog" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; margin-right: 15px; transition: background-color 0.3s ease;">
+          View All Foxx Blogs
+        </a>
+        {% if blogs['foxx-podcast'].articles.size > 0 %}
+          <a href="/blogs/foxx-podcast" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #9333ea; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s ease;">
+            View All Foxx Podcast
+          </a>
+        {% endif %}
+      {% elsif blog.handle == 'foxx-blog' %}
+        <a href="/blogs/foxx-in-news" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; margin-right: 15px; transition: background-color 0.3s ease;">
+          View All Foxx In News
+        </a>
+        {% if blogs['foxx-podcast'].articles.size > 0 %}
+          <a href="/blogs/foxx-podcast" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #9333ea; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s ease;">
+            View All Foxx Podcast
+          </a>
+        {% endif %}
+      {% elsif blog.handle == 'foxx-podcast' %}
+        <a href="/blogs/foxx-blog" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; margin-right: 15px; transition: background-color 0.3s ease;">
+          View All Foxx Blogs
+        </a>
+        <a href="/blogs/foxx-in-news" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s ease;">
+          View All Foxx In News
+        </a>
+      {% endif %}
     </div>
   </div>
 </div>
 
 <style>
 .recommendation-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
 }
 
 .recommendation-card:hover img {
@@ -278,7 +386,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 
 
 
