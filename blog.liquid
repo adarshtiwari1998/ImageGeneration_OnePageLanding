@@ -131,36 +131,36 @@
     
     <div class="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
       {% for article in other_blog.articles limit: 3 %}
-        <div class="recommendation-card" style="background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease;">
+        <div class="recommendation-card" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05);">
           {% if article.image %}
-            <div class="recommendation-image" style="height: 200px; overflow: hidden;">
-              <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="recommendation-image" style="height: 200px; overflow: hidden; position: relative;">
+              <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
             </div>
           {% endif %}
           
-          <div class="recommendation-content" style="padding: 20px;">
-            <h3 style="font-size: 1.2rem; margin-bottom: 10px; line-height: 1.4;">
-              <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none;">{{ article.title }}</a>
+          <div class="recommendation-content" style="padding: 22px;">
+            <h3 style="font-size: 1.15rem; margin-bottom: 12px; line-height: 1.45; font-weight: 600;">
+              <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none; transition: color 0.2s ease;">{{ article.title }}</a>
             </h3>
             
-            <p class="recommendation-date" style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+            <p class="recommendation-date" style="font-size: 0.85rem; color: #7a7a7a; margin-bottom: 16px; font-weight: 500;">
               <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
               {% if settings.blog_author_enable and article.author %}
-                <span style="margin: 0 5px;">•</span>
+                <span style="margin: 0 6px; color: #bbb;">•</span>
                 {{ article.author }}
               {% endif %}
             </p>
             
-            <div class="recommendation-excerpt" style="font-size: 0.95rem; line-height: 1.6; color: #555; margin-bottom: 15px;">
+            <div class="recommendation-excerpt" style="font-size: 0.94rem; line-height: 1.65; color: #4a5568; margin-bottom: 18px;">
               {% if article.excerpt.size > 0 %}
-                {{ article.excerpt | strip_html | truncatewords: 20 }}
+                {{ article.excerpt | strip_html | truncatewords: 18 }}
               {% else %}
-                {{ article.content | strip_html | truncatewords: 20 }}
+                {{ article.content | strip_html | truncatewords: 18 }}
               {% endif %}
             </div>
             
-            <a href="{{ article.url }}" style="color: #007bff; text-decoration: none; font-weight: 500; font-size: 0.9rem;">
-              Read More →
+            <a href="{{ article.url }}" class="recommendation-link" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+              Read More <span style="transition: transform 0.2s ease;">→</span>
             </a>
           </div>
         </div>
@@ -177,15 +177,29 @@
 
 <style>
 .recommendation-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+}
+
+.recommendation-card:hover img {
+  transform: scale(1.02);
+}
+
+.recommendation-card:hover .recommendation-link span {
+  transform: translateX(3px);
 }
 
 .view-all-link:hover {
   background: #0056b3 !important;
+  transform: translateY(-1px);
 }
 
 .recommendation-card h3 a:hover {
-  color: #007bff;
+  color: #2563eb;
+}
+
+.recommendation-link:hover {
+  color: #1d4ed8 !important;
 }
 
 @media (max-width: 768px) {
@@ -196,6 +210,10 @@
   
   .recommendations-title {
     font-size: 1.5rem !important;
+  }
+  
+  .recommendation-content {
+    padding: 18px !important;
   }
 }
 </style>
