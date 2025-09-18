@@ -17,15 +17,13 @@ border: 2px solid #e885ac!important;
 
 <div class="blog_sction-home">
   <div class="blog_header" style="text-align:center">
-  <h5>{{settings.home_page_blog}}</h5> 
-  {% comment %} <div class="aimSection width900" id="product-sec1">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h5 class="text-white bold heading2bfs"><span>{{settings.home_page_blog}}</span></h5>
-        </div>
-    </div>
-</div> {% endcomment %}
-  <a href="{{settings.home_page_blog_button_link}}">View all blogs </a>
+  <h5>Latest from All Our Blogs</h5> 
+  <div class="blog_category_links">
+    <a href="/blogs/foxx-blog" class="category-link foxx-blog">Foxx Blog</a>
+    <a href="/blogs/foxx-podcast" class="category-link foxx-podcast">Foxx Podcast</a>
+    <a href="/blogs/foxx-in-news" class="category-link foxx-news">Foxx In News</a>
+    <a href="{{settings.home_page_blog_button_link}}" class="view-all-link">View All</a>
+  </div>
   </div>
   {% assign home_blog_limit = settings.home_page_blog_limit %}
   {% assign article_count = 0 %}
@@ -41,8 +39,39 @@ border: 2px solid #e885ac!important;
 <p class="home_page_blog_image">{{ article | img_url: '256x256' | img_tag: image_alt, 'article__image' | link_to: article.url }}</p>
 {% endif %}
 
-
     <div class="blog_title_text_block"   {% unless article.image %} style="width:100%;     padding-left:0px;" {% endunless %}>
+      {% comment %} Determine which blog category this article belongs to {% endcomment %}
+      {% assign blog_category = '' %}
+      {% assign category_class = '' %}
+      {% for blog_article in blogs['foxx-blog'].articles %}
+        {% if blog_article.id == article.id %}
+          {% assign blog_category = 'Foxx Blog' %}
+          {% assign category_class = 'foxx-blog' %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      {% if blog_category == '' %}
+        {% for blog_article in blogs['foxx-podcast'].articles %}
+          {% if blog_article.id == article.id %}
+            {% assign blog_category = 'Foxx Podcast' %}
+            {% assign category_class = 'foxx-podcast' %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if blog_category == '' %}
+        {% for blog_article in blogs['foxx-in-news'].articles %}
+          {% if blog_article.id == article.id %}
+            {% assign blog_category = 'Foxx In News' %}
+            {% assign category_class = 'foxx-news' %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      
+      {% comment %} Display category badge {% endcomment %}
+      <div class="blog-category-badge {{ category_class }}">{{ blog_category }}</div>
+      
 <h1><a href="{{ article.url }}">{{ article.title }}</a></h1>
         <p class="blog-date">
       <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
@@ -153,4 +182,120 @@ border: 2px solid #e885ac!important;
    padding: 0 !important;
 }
   }
+
+/* Blog Category Header Links */
+.blog_category_links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.category-link, .view-all-link {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.category-link.foxx-blog {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #bbdefb;
+}
+
+.category-link.foxx-podcast {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-color: #ce93d8;
+}
+
+.category-link.foxx-news {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.view-all-link {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.category-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.category-link.foxx-blog:hover {
+  background: #1565c0;
+  color: white;
+}
+
+.category-link.foxx-podcast:hover {
+  background: #7b1fa2;
+  color: white;
+}
+
+.category-link.foxx-news:hover {
+  background: #2e7d32;
+  color: white;
+}
+
+.view-all-link:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Individual Post Category Badges */
+.blog-category-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.blog-category-badge.foxx-blog {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+.blog-category-badge.foxx-podcast {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border: 1px solid #ce93d8;
+}
+
+.blog-category-badge.foxx-news {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+/* Responsive Design for Category Links */
+@media (max-width: 700px) {
+  .blog_category_links {
+    gap: 8px;
+  }
+  
+  .category-link, .view-all-link {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .blog_header h5 {
+    font-size: 18px !important;
+    margin-bottom: 10px;
+  }
+}
 </style>
