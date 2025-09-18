@@ -1991,6 +1991,110 @@ var ww,wh,textHeartTimer,canvas=document.getElementById("heartsCanvas"),ctx=canv
 })();
 </script>
 
+  <!-- Layout Max-Width Constraint Styles - Prevent Stretching on Large Screens -->
+  <style>
+    /* Global layout constraints - similar to Google, Amazon, etc. */
+    html {
+      background-color: #f8f9fa; /* Light background for areas outside max-width */
+    }
+    
+    body {
+      max-width: 1400px; /* Maximum width for the entire layout */
+      margin: 0 auto; /* Center the layout horizontally */
+      background-color: #ffffff; /* White background for main content area */
+      box-shadow: 0 0 20px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+      position: relative;
+    }
+    
+    /* Ensure wrapper and main content respect the constraints */
+    .wrapper {
+      max-width: 100%; /* Ensure wrapper doesn't exceed body width */
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .main-content {
+      max-width: 100%;
+    }
+    
+    /* Header constraints */
+    .site-header {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    
+    .site-header .wrapper {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+    
+    /* Content area constraints */
+    .grid--full {
+      max-width: 100%;
+    }
+    
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 1440px) {
+      body {
+        max-width: 100%;
+        box-shadow: none;
+      }
+      
+      html {
+        background-color: #ffffff;
+      }
+    }
+    
+    /* Extra wide screen specific adjustments */
+    @media (min-width: 1600px) {
+      body {
+        max-width: 1400px; /* Keep fixed max width on very large screens */
+      }
+      
+      /* Ensure promotional banners and sections also respect constraints */
+      .header-bar,
+      .promotional-banner,
+      .promo-wrapper,
+      [class*="promo-"] {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+    }
+    
+    /* Fix for any full-width backgrounds that need to extend beyond content */
+    .full-width-background {
+      position: relative;
+    }
+    
+    .full-width-background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100%;
+      background: inherit;
+      z-index: -1;
+    }
+    
+    /* Ensure sidebar and content grid work well with constraints */
+    .sticky-grid {
+      max-width: 100%;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .wrapper {
+        padding: 0 15px;
+      }
+      
+      .site-header .wrapper {
+        padding: 0 15px;
+      }
+    }
+  </style>
+  
   </body>
 
 
