@@ -10,6 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "http-server": "^14.1.1"
+    "express": "^5.1.0",
+    "http-server": "^14.1.1",
+    "liquidjs": "^10.21.1"
   }
 }
