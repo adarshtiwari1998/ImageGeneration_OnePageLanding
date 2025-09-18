@@ -2,7 +2,13 @@
 {% paginate blog.articles by 5 %}
     <header class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h1 class="section-header__title">{{ blog.title }}</h1>
-        <a href="/blogs/foxx-in-news" class=" animated-button">Foxx In News</a>
+        {% if blog.handle == 'foxx-in-news' %}
+          <a href="/blogs/foxx-blog" class="animated-button">Foxx Blogs</a>
+        {% elsif blog.handle == 'foxx-blog' %}
+          <a href="/blogs/foxx-in-news" class="animated-button">Foxx In News</a>
+        {% else %}
+          <a href="/blogs/foxx-in-news" class="animated-button">Foxx In News</a>
+        {% endif %}
       </header>
 
       <style>
@@ -105,6 +111,95 @@
 {% endif %}
 
 {% endpaginate %}
+
+<!-- Recommendations Section -->
+{% comment %} Show recommendations from the other blog category {% endcomment %}
+{% if blog.handle == 'foxx-in-news' %}
+  {% assign other_blog = blogs['foxx-blog'] %}
+  {% assign other_blog_title = 'Foxx Blogs' %}
+{% elsif blog.handle == 'foxx-blog' %}
+  {% assign other_blog = blogs['foxx-in-news'] %}
+  {% assign other_blog_title = 'Foxx In News' %}
+{% endif %}
+
+{% if other_blog and other_blog.articles.size > 0 %}
+<div class="recommendations-section" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #ecf0f4;">
+  <div class="container">
+    <h2 class="recommendations-title" style="font-size: 2rem; margin-bottom: 30px; color: #1a2024; text-align: center;">
+      Recommended from {{ other_blog_title }}
+    </h2>
+    
+    <div class="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+      {% for article in other_blog.articles limit: 3 %}
+        <div class="recommendation-card" style="background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease;">
+          {% if article.image %}
+            <div class="recommendation-image" style="height: 200px; overflow: hidden;">
+              <img src="{{ article | img_url: '400x400' }}" alt="{{ article.title | escape }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          {% endif %}
+          
+          <div class="recommendation-content" style="padding: 20px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 10px; line-height: 1.4;">
+              <a href="{{ article.url }}" style="color: #1a2024; text-decoration: none;">{{ article.title }}</a>
+            </h3>
+            
+            <p class="recommendation-date" style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+              {% if settings.blog_author_enable and article.author %}
+                <span style="margin: 0 5px;">•</span>
+                {{ article.author }}
+              {% endif %}
+            </p>
+            
+            <div class="recommendation-excerpt" style="font-size: 0.95rem; line-height: 1.6; color: #555; margin-bottom: 15px;">
+              {% if article.excerpt.size > 0 %}
+                {{ article.excerpt | strip_html | truncatewords: 20 }}
+              {% else %}
+                {{ article.content | strip_html | truncatewords: 20 }}
+              {% endif %}
+            </div>
+            
+            <a href="{{ article.url }}" style="color: #007bff; text-decoration: none; font-weight: 500; font-size: 0.9rem;">
+              Read More →
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="{{ other_blog.url }}" class="view-all-link" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s ease;">
+        View All {{ other_blog_title }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.recommendation-card:hover {
+  transform: translateY(-5px);
+}
+
+.view-all-link:hover {
+  background: #0056b3 !important;
+}
+
+.recommendation-card h3 a:hover {
+  color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .recommendations-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  .recommendations-title {
+    font-size: 1.5rem !important;
+  }
+}
+</style>
+{% endif %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const tabsContainer = document.querySelector('.link-bar__linklist');
